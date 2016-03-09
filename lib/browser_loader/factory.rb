@@ -15,6 +15,12 @@
 #       ie: start Internet Explorer
 #       ff: start Firefox
 #
+#
+# Additional information:
+#
+#   https://sites.google.com/a/chromium.org/chromedriver/capabilities
+#   http://peter.sh/experiments/chromium-command-line-switches/
+#
 ##############################################################################
 
 require 'watir-webdriver'
@@ -182,6 +188,10 @@ module BrowserLoader
 
     ##
     # Set the download directory the browser will use
+    #
+    # NOTE: This is not currently working as of chromedriver v2.20
+    # Until this works in chromedriver, the download_dir value should be
+    # set to match the default download directory so things work as expected.
     #
 
     def self.download_dir= dir
