@@ -217,7 +217,7 @@ module BrowserLoader
         prefs = {'download.default_directory' => download_dir }
         #caps['chromeOptions']['profile.download.prompt_for_download'] = false
         #caps['chromeOptions']['download.default_directory'] = download_dir
-        caps['prefs' => prefs]
+        caps['chromeOptions']['prefs' => prefs]
       end
 
       # Set the browser timeout. Default is 60 seconds.
