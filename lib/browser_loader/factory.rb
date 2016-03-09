@@ -186,6 +186,7 @@ module BrowserLoader
 
     def self.download_dir= dir
       @@download_dir = dir
+      @@download_dir.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
     end
 
     ##
@@ -212,6 +213,12 @@ module BrowserLoader
       # Specify chrome browser capabilities.
       caps = Selenium::WebDriver::Remote::Capabilities.chrome
       caps['chromeOptions'] = {'binary' => chromium_exe }
+      unless download_dir.empty?
+        prefs = {'download.default_directory' => download_dir }
+        #caps['chromeOptions']['profile.download.prompt_for_download'] = false
+        #caps['chromeOptions']['download.default_directory'] = download_dir
+        caps['prefs' => prefs]
+      end
 
       # Set the browser timeout. Default is 60 seconds.
       client.timeout = browser_timeout
@@ -220,8 +227,7 @@ module BrowserLoader
         :switches => switches,
         :http_client => client,
         :service_log_path => user_data_dir + '/chromedriver.out',
-        :desired_capabilities => caps,
-        :profile => profile
+        :desired_capabilities => caps
     end
 
   private
@@ -237,21 +243,6 @@ module BrowserLoader
       else
         chromium_exe = `which chromium-browser`.chomp
       end
-    end
-
-    def self.profile
-      return Selenium::WebDriver::Chrome::Profile.new if download_dir.empty?
-
-      # See [watirwebdriver.com](http://watirwebdriver.com/browser-downloads/)
-      # for more info.
-      dd = download_dir
-      dd.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
-
-      the_profile = Selenium::WebDriver::Chrome::Profile.new
-      the_profile['download.prompt_for_download'] = false
-      the_profile['download.default_directory'] = dd
-
-      the_profile
     end
   end
 end

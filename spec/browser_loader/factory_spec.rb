@@ -62,6 +62,14 @@ describe BrowserLoader::Factory do
     browser.close
   end
 
+  it "starts chrome with specified download dir and browses to google" do
+    factory.download_dir = "tmp/downloads"
+    browser = factory.build
+    browser.goto "https://google.com"
+    expect(browser.html).to include "searchform"
+    browser.close
+  end
+
   it "starts firefox and browses to google" do
     ENV['BROWSER'] = 'ff'
     browser = factory.build
