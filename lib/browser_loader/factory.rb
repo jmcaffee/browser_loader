@@ -176,6 +176,18 @@ module BrowserLoader
       @@switches = Array.new
     end
 
+    def self.download_dir
+      @@download_dir ||= ""
+    end
+
+    ##
+    # Set the download directory the browser will use
+    #
+
+    def self.download_dir= dir
+      @@download_dir = dir
+    end
+
     ##
     # Configure and return a browser object
     #
@@ -208,7 +220,8 @@ module BrowserLoader
         :switches => switches,
         :http_client => client,
         :service_log_path => user_data_dir + '/chromedriver.out',
-        :desired_capabilities => caps
+        :desired_capabilities => caps,
+        :profile => profile
     end
 
   private
@@ -224,6 +237,21 @@ module BrowserLoader
       else
         chromium_exe = `which chromium-browser`.chomp
       end
+    end
+
+    def self.profile
+      return Selenium::WebDriver::Chrome::Profile.new if download_dir.empty?
+
+      # See [watirwebdriver.com](http://watirwebdriver.com/browser-downloads/)
+      # for more info.
+      dd = download_dir
+      dd.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
+
+      the_profile = Selenium::WebDriver::Chrome::Profile.new
+      the_profile['download.prompt_for_download'] = false
+      the_profile['download.default_directory'] = dd
+
+      the_profile
     end
   end
 end
